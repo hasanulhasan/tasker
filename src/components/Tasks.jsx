@@ -21,14 +21,40 @@ let tasks = [
 ]
 export default function Tasks() {
 	const [modalOpen, setModalOpen] = useState(false)
-	const handleAddTask = (createdTask) => {
-		tasks = [...tasks, createdTask]
+	const [taskToUpdate, setTaskToUpdate] = useState(null)
+
+	const handleTaskMutation = (createdTask, isAdd) => {
+		if(isAdd){
+			tasks = [...tasks, createdTask]
+		}
+		else{
+			tasks = tasks.map(task => {
+				if(task.id === createdTask.id){
+					return createdTask
+				}
+				return task
+			})
+		}
+		setTaskToUpdate(null)
+	}
+
+	const handleEditTask = (updateToTask) => {
+		setTaskToUpdate(updateToTask)
+		setModalOpen(true)
+	}
+
+	const handleDelete = (id) => {
+		tasks = tasks.filter(task => task.id !== id)
 	}
 
   return (
     <section className="mb-20" id="tasks">
 		<div className="container">
-			{modalOpen && <TaskModal setModalOpen={setModalOpen} handleAddTask={handleAddTask}/>}
+			{modalOpen && <TaskModal 
+			setModalOpen={setModalOpen} 
+			handleTaskMutation={handleTaskMutation} 
+			taskToUpdate={taskToUpdate}
+			setTaskToUpdate={setTaskToUpdate}/>}
 		{/* <!-- Search Box Ends --> */}
 			<div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
 				<div className="mb-14 items-center justify-between sm:flex">
@@ -69,7 +95,11 @@ export default function Tasks() {
 						</thead>
 						<tbody>
 							{
-								tasks.map(task => <Task key={task.id} task={task} />)
+								tasks.map(task => <Task 
+									key={task.id}
+									task={task} 
+									handleEditTask={handleEditTask}
+									handleDelete={handleDelete}/>)
 							}
 						</tbody>
 					</table>

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-export default function Task({task}) {
-	const { title, description, tags, isFavorite, priority} = task;
+export default function Task({task, handleEditTask, handleDelete}) {
+	const {id, title, description, tags, isFavorite, priority} = task;
 	const [fovorite, setIsFavorite] = useState(isFavorite);
 
   return (
@@ -33,8 +33,8 @@ export default function Task({task}) {
 					<td className="text-center">{priority}</td>
 					<td>
 						<div className="flex items-center justify-center space-x-3">
-							<button className="text-red-500">Delete</button>
-							<button className="text-blue-500">Edit</button>
+							<button onClick={()=> handleDelete(id)} className="text-red-500">Delete</button>
+							<button onClick={()=> handleEditTask(task)} className="text-blue-500">Edit</button>
 						</div>
 					</td>
 				</tr>
