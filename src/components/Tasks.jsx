@@ -1,52 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
 import Task from "./Task";
-import { useReducer, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 import TaskModal from "./TaskModal";
-
-let initialState = [
-	{
-    id: 1,
-    title: "API Data Synchronization with Python",
-    description: "Implement a Python solution to synchronize data between an API and a third-party database securely, optimizing data exchange.",
-    tags: ["python", "api", "data synchronization"],
-		priority: "Low",
-    isFavorite: true
-  },
-	{
-    id: 2,
-    title: "Learning Java",
-    description: "Khub kore Java Shikte hobe",
-    tags: ["android", "java", "programming"],
-		priority: "High",
-    isFavorite: true
-  },
-]
+import { initialState, reducer } from "../state/taskReducers";
+export const MODAL_CONTEXT = createContext();
 
 export default function Tasks() {
-	const reducer = (state, action) => {
-			if(action.type === 'ADD_TASK'){
-				console.log('called', action.payload)
-				return [...state, action.payload]
-			}
-			else if(action.type === 'EDIT_TASK'){
-				return state.map(task => {
-					if(task.id === action.payload.id){
-						return action.payload
-					}
-					return task
-				})
-			}
-			else if(action.type === 'DELETE_TASK'){
-				return state.filter(task => task.id !== action.payload)
-			}
-			else{
-				return state
-			}
-	}
-
 	const [tasks, dispatch] = useReducer(reducer, initialState)
-
 	const [modalOpen, setModalOpen] = useState(false)
 	const [taskToUpdate, setTaskToUpdate] = useState(null)
+	const [searchTerm, setSearchTerm] = useState('');
 
 	const handleTaskMutation = (createdTask, isAdd) => {
 		if(isAdd){
@@ -67,14 +30,23 @@ export default function Tasks() {
 		dispatch({type: 'DELETE_TASK', payload: id})
 	}
 
+	const handleFavorite = (id) => {
+		dispatch({type: 'FAVORITE', payload: id})
+	}
+	
+	const handleDeleteAll = () => {
+		dispatch({type: 'DELETE_ALL'})
+	}
+
+
   return (
     <section className="mb-20" id="tasks">
 		<div className="container">
-			{modalOpen && <TaskModal 
-			setModalOpen={setModalOpen} 
-			handleTaskMutation={handleTaskMutation} 
-			taskToUpdate={taskToUpdate}
-			setTaskToUpdate={setTaskToUpdate}/>}
+			{ modalOpen && 
+			<MODAL_CONTEXT.Provider value={{setModalOpen,handleTaskMutation,taskToUpdate,setTaskToUpdate}}>
+			<TaskModal />
+			</MODAL_CONTEXT.Provider>
+			}
 		{/* <!-- Search Box Ends --> */}
 			<div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
 				<div className="mb-14 items-center justify-between sm:flex">
@@ -83,7 +55,7 @@ export default function Tasks() {
 						<form>
 							<div className="flex">
 								<div className="relative overflow-hidden rounded-lg text-gray-50 md:min-w-[380px] lg:min-w-[440px]">
-									<input type="search" id="search-dropdown"
+									<input onChange={(e)=> setSearchTerm(e.target.value)} type="search" id="search-dropdown"
 										className="z-20 block w-full bg-gray-800 px-4 py-2 pr-10 focus:outline-none" placeholder="Search Task"
 										required />
 									<button type="submit" className="absolute right-2 top-0 h-full rounded-e-lg text-white md:right-4">
@@ -98,12 +70,16 @@ export default function Tasks() {
 							</div>
 						</form>
 						<button onClick={()=> setModalOpen(!modalOpen)} className="rounded-md bg-blue-500 px-3.5 py-2.5 text-sm font-semibold">Add Task</button>
-						<button className="rounded-md bg-red-500 px-3.5 py-2.5 text-sm font-semibold">Delete All</button>
+						<button onClick={()=> handleDeleteAll()} className="rounded-md bg-red-500 px-3.5 py-2.5 text-sm font-semibold">Delete All</button>
 					</div>
 				</div>
 				<div className="overflow-auto">
 					<table className="table-fixed overflow-auto xl:w-full">
-						<thead>
+						
+							{
+								tasks?.length === 0 ? <><h1 className="text-2xl text-center">There is no Task</h1></> :
+								<>
+								<thead>
 							<tr>
 								<th className="p-4 pb-8 text-sm font-semibold capitalize w-[48px]"></th>
 								<th className="p-4 pb-8 text-sm font-semibold capitalize w-[300px]"> Title </th>
@@ -113,15 +89,18 @@ export default function Tasks() {
 								<th className="p-4 pb-8 text-sm font-semibold capitalize md:w-[100px]"> Options </th>
 							</tr>
 						</thead>
-						<tbody>
-							{
-								tasks.map(task => <Task 
-									key={task.id}
-									task={task} 
-									handleEditTask={handleEditTask}
-									handleDelete={handleDelete}/>)
+								<tbody>
+									{ tasks.filter(task => task?.title.toLowerCase().includes(searchTerm.toLowerCase())).map(task => <Task 
+										key={task.id}
+										task={task} 
+										handleEditTask={handleEditTask}
+										handleDelete={handleDelete}
+										handleFavorite={handleFavorite}
+										/>)
+									}
+								</tbody>
+								</>
 							}
-						</tbody>
 					</table>
 				</div>
 			</div>

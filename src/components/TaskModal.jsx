@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { MODAL_CONTEXT } from "./Tasks";
 
-export default function TaskModal({setModalOpen,handleTaskMutation,taskToUpdate,setTaskToUpdate}) {
+export default function TaskModal() {
+    const {setModalOpen,handleTaskMutation,taskToUpdate,setTaskToUpdate} = useContext(MODAL_CONTEXT)
     const [isAdd, setIsAdd] = useState(Object.is(taskToUpdate, null))
     const [task, setTask] = useState( taskToUpdate || {
         id: crypto.randomUUID(),

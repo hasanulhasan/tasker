@@ -1,14 +1,13 @@
 /* eslint-disable react/prop-types */
-
 import { useState } from "react";
 
 export default function Task({task, handleEditTask, handleDelete}) {
 	const {id, title, description, tags, isFavorite, priority} = task;
-	const [fovorite, setIsFavorite] = useState(isFavorite);
+	const [fovorite, setFavorite] = useState(isFavorite);
 
   return (
     <tr className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2">
-			<td onClick={()=> setIsFavorite(!fovorite)}>
+			<td onClick={()=> setFavorite(!fovorite)}>
 				<svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-star" width="24"
 					height="24" viewBox="0 0 24 24" strokeWidth="2" stroke={ fovorite ? "yellow" : "currentColor"} fill={ fovorite ? "yellow" : "none"}
 					strokeLinecap="round" strokeLinejoin="round">
