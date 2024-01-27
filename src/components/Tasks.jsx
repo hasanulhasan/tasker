@@ -1,10 +1,14 @@
 import Task from "./Task";
 import data from '../Data/data.json'
+import { useState } from "react";
+import TaskModal from "./TaskModal";
 export default function Tasks() {
+	const [modalOpen, setModalOpen] = useState(false)
 
   return (
     <section className="mb-20" id="tasks">
 		<div className="container">
+			{modalOpen && <TaskModal setModalOpen={setModalOpen}/>}
 		{/* <!-- Search Box Ends --> */}
 			<div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
 				<div className="mb-14 items-center justify-between sm:flex">
@@ -27,7 +31,7 @@ export default function Tasks() {
 								</div>
 							</div>
 						</form>
-						<button className="rounded-md bg-blue-500 px-3.5 py-2.5 text-sm font-semibold">Add Task</button>
+						<button onClick={()=> setModalOpen(!modalOpen)} className="rounded-md bg-blue-500 px-3.5 py-2.5 text-sm font-semibold">Add Task</button>
 						<button className="rounded-md bg-red-500 px-3.5 py-2.5 text-sm font-semibold">Delete All</button>
 					</div>
 				</div>
