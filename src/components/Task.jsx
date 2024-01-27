@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function Task({task}) {
-	const { title, description, tags, isFavorite} = task;
+	const { title, description, tags, isFavorite, priority} = task;
 	const [fovorite, setIsFavorite] = useState(isFavorite);
 
   return (
@@ -30,7 +30,7 @@ export default function Task({task}) {
 					}
 						</ul>
 					</td>
-					<td className="text-center">High</td>
+					<td className="text-center">{priority}</td>
 					<td>
 						<div className="flex items-center justify-center space-x-3">
 							<button className="text-red-500">Delete</button>

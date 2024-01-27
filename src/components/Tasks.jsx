@@ -1,14 +1,34 @@
 import Task from "./Task";
-import data from '../Data/data.json'
 import { useState } from "react";
 import TaskModal from "./TaskModal";
+let tasks = [
+	{
+    id: 1,
+    title: "API Data Synchronization with Python",
+    description: "Implement a Python solution to synchronize data between an API and a third-party database securely, optimizing data exchange.",
+    tags: ["python", "api", "data synchronization"],
+		priority: "Low",
+    isFavorite: true
+  },
+	{
+    id: 2,
+    title: "Learning Java",
+    description: "Khub kore Java Shikte hobe",
+    tags: ["android", "java", "programming"],
+		priority: "High",
+    isFavorite: true
+  },
+]
 export default function Tasks() {
 	const [modalOpen, setModalOpen] = useState(false)
+	const handleAddTask = (createdTask) => {
+		tasks = [...tasks, createdTask]
+	}
 
   return (
     <section className="mb-20" id="tasks">
 		<div className="container">
-			{modalOpen && <TaskModal setModalOpen={setModalOpen}/>}
+			{modalOpen && <TaskModal setModalOpen={setModalOpen} handleAddTask={handleAddTask}/>}
 		{/* <!-- Search Box Ends --> */}
 			<div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
 				<div className="mb-14 items-center justify-between sm:flex">
@@ -49,7 +69,7 @@ export default function Tasks() {
 						</thead>
 						<tbody>
 							{
-								data.tasks.map(task => <Task key={task.id} task={task} />)
+								tasks.map(task => <Task key={task.id} task={task} />)
 							}
 						</tbody>
 					</table>
