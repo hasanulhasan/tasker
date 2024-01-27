@@ -3,7 +3,9 @@ import Task from "./Task";
 import { createContext, useReducer, useState } from "react";
 import TaskModal from "./TaskModal";
 import { initialState, reducer } from "../state/taskReducers";
+import { ToastContainer, toast } from "react-toastify";
 export const MODAL_CONTEXT = createContext();
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Tasks() {
 	const [tasks, dispatch] = useReducer(reducer, initialState)
@@ -14,9 +16,11 @@ export default function Tasks() {
 	const handleTaskMutation = (createdTask, isAdd) => {
 		if(isAdd){
 			dispatch({type: 'ADD_TASK', payload: createdTask})
+			toast("Task Added!")
 		}
 		else{
 			dispatch({type: 'EDIT_TASK', payload: createdTask})
+			toast("Task Edited!")
 		}
 		setTaskToUpdate(null)
 	}
@@ -27,7 +31,10 @@ export default function Tasks() {
 	}
 
 	const handleDelete = (id) => {
-		dispatch({type: 'DELETE_TASK', payload: id})
+		if (confirm("Are you sure to delete this Task?")) {
+			dispatch({type: 'DELETE_TASK', payload: id})
+			toast("Task Deleted!")
+		}
 	}
 
 	const handleFavorite = (id) => {
@@ -35,7 +42,10 @@ export default function Tasks() {
 	}
 	
 	const handleDeleteAll = () => {
-		dispatch({type: 'DELETE_ALL'})
+		if (confirm("Are you sure to delete All Task?")) {
+			dispatch({type: 'DELETE_ALL'})
+			toast("All Tasks Deleted!")
+		}
 	}
 
 
@@ -77,7 +87,7 @@ export default function Tasks() {
 					<table className="table-fixed overflow-auto xl:w-full">
 						
 							{
-								tasks?.length === 0 ? <><h1 className="text-2xl text-center">There is no Task</h1></> :
+								tasks?.length === 0 ? <><h1 className="text-2xl text-center">Task List is empty!</h1></> :
 								<>
 								<thead>
 							<tr>
@@ -104,6 +114,7 @@ export default function Tasks() {
 					</table>
 				</div>
 			</div>
+			<ToastContainer autoClose={1200} />
 		</div>
 	</section>
   )
