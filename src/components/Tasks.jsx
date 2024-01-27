@@ -1,7 +1,8 @@
 import Task from "./Task";
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import TaskModal from "./TaskModal";
-let tasks = [
+
+let initialState = [
 	{
     id: 1,
     title: "API Data Synchronization with Python",
@@ -19,21 +20,40 @@ let tasks = [
     isFavorite: true
   },
 ]
+
 export default function Tasks() {
+	const reducer = (state, action) => {
+			if(action.type === 'ADD_TASK'){
+				console.log('called', action.payload)
+				return [...state, action.payload]
+			}
+			else if(action.type === 'EDIT_TASK'){
+				return state.map(task => {
+					if(task.id === action.payload.id){
+						return action.payload
+					}
+					return task
+				})
+			}
+			else if(action.type === 'DELETE_TASK'){
+				return state.filter(task => task.id !== action.payload)
+			}
+			else{
+				return state
+			}
+	}
+
+	const [tasks, dispatch] = useReducer(reducer, initialState)
+
 	const [modalOpen, setModalOpen] = useState(false)
 	const [taskToUpdate, setTaskToUpdate] = useState(null)
 
 	const handleTaskMutation = (createdTask, isAdd) => {
 		if(isAdd){
-			tasks = [...tasks, createdTask]
+			dispatch({type: 'ADD_TASK', payload: createdTask})
 		}
 		else{
-			tasks = tasks.map(task => {
-				if(task.id === createdTask.id){
-					return createdTask
-				}
-				return task
-			})
+			dispatch({type: 'EDIT_TASK', payload: createdTask})
 		}
 		setTaskToUpdate(null)
 	}
@@ -44,7 +64,7 @@ export default function Tasks() {
 	}
 
 	const handleDelete = (id) => {
-		tasks = tasks.filter(task => task.id !== id)
+		dispatch({type: 'DELETE_TASK', payload: id})
 	}
 
   return (
